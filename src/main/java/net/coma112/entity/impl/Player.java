@@ -3,22 +3,41 @@ package net.coma112.entity.impl;
 import net.coma112.GamePanel;
 import net.coma112.entity.Entity;
 import net.coma112.handlers.KeyHandler;
+import net.coma112.sprite.SpriteAnimation;
+import net.coma112.sprite.SpriteLoader;
+import net.coma112.sprite.SpriteSheet;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Player extends Entity {
     GamePanel gamePanel;
     KeyHandler keyHandler;
+
+    @SpriteSheet(pattern = "player/boy_up_{n}.png")
+    private BufferedImage[] upSprites;
+
+    @SpriteSheet(pattern = "player/boy_down_{n}.png")
+    private BufferedImage[] downSprites;
+
+    @SpriteSheet(pattern = "player/boy_left_{n}.png")
+    private BufferedImage[] leftSprites;
+
+    @SpriteSheet(pattern = "player/boy_right_{n}.png")
+    private BufferedImage[] rightSprites;
+
+    private final Map<String, SpriteAnimation> animations = new HashMap<>();
+    private SpriteAnimation currentAnimation;
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
 
         setDefaultValues();
-        getPlayerImage();
+        loadSprites();
+        setupAnimations();
     }
 
     public void setDefaultValues() {
@@ -28,23 +47,24 @@ public class Player extends Entity {
         direction = "down";
     }
 
-    public void getPlayerImage() {
-        try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/player/boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/player/boy_up_2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/player/boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/player/boy_down_2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/player/boy_left_1.png"));  // FIX: _1 hozzáadva
-            left2 = ImageIO.read(getClass().getResourceAsStream("/player/boy_left_2.png"));  // FIX: _2 hozzáadva
-            right1 = ImageIO.read(getClass().getResourceAsStream("/player/boy_right_1.png")); // FIX: _1 hozzáadva
-            right2 = ImageIO.read(getClass().getResourceAsStream("/player/boy_right_2.png")); // FIX: _2 hozzáadva
-        } catch (IOException exception) {
-            System.err.println(exception.getMessage());
-        }
+    private void loadSprites() {
+        SpriteLoader.loadSprites(this);
+    }
+
+    private void setupAnimations() {
+        animations.put("up", new SpriteAnimation(upSprites, 16));
+        animations.put("down", new SpriteAnimation(downSprites, 16));
+        animations.put("left", new SpriteAnimation(leftSprites, 16));
+        animations.put("right", new SpriteAnimation(rightSprites, 16));
+
+        currentAnimation = animations.get(direction);
     }
 
     public void update() {
-        if (keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
+        boolean isMoving = keyHandler.upPressed || keyHandler.downPressed ||
+                keyHandler.leftPressed || keyHandler.rightPressed;
+
+        if (isMoving) {
             if (keyHandler.upPressed) {
                 direction = "up";
                 y -= speed;
@@ -65,16 +85,24 @@ public class Player extends Entity {
                 x += speed;
             }
 
-            spriteCounter++;
-
-            if (spriteCounter > 16) {
-                if (spriteNumber == 1) {
-                    spriteNumber = 2;
-                } else if (spriteNumber == 2) {
-                    spriteNumber = 1;
+            SpriteAnimation newAnimation = animations.get(direction);
+            if (currentAnimation != newAnimation) {
+                if (currentAnimation != null) {
+                    currentAnimation.stop();
+                    currentAnimation.reset();
                 }
+                currentAnimation = newAnimation;
+            }
 
-                spriteCounter = 0;
+            if (!currentAnimation.isPlaying()) {
+                currentAnimation.play();
+            }
+
+            currentAnimation.update();
+        } else {
+            if (currentAnimation != null && currentAnimation.isPlaying()) {
+                currentAnimation.stop();
+                currentAnimation.reset();
             }
         }
     }
@@ -82,45 +110,21 @@ public class Player extends Entity {
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
 
-        switch (direction) {
-            case "up" -> {
-                if (spriteNumber == 1) {
-                    image = up1;
-                }
+        if (currentAnimation != null) {
+            image = currentAnimation.getCurrentFrame();
+        }
 
-                if (spriteNumber == 2) {
-                    image = up2;
-                }
-            }
-            case "down" -> {
-                if (spriteNumber == 1) {
-                    image = down1;
-                }
-
-                if (spriteNumber == 2) {
-                    image = down2;
-                }
-            }
-            case "left" -> {
-                if (spriteNumber == 1) {
-                    image = left1;
-                }
-
-                if (spriteNumber == 2) {
-                    image = left2;
-                }
-            }
-            case "right" -> {
-                if (spriteNumber == 1) {
-                    image = right1;
-                }
-
-                if (spriteNumber == 2) {
-                    image = right2;
-                }
+        if (image == null) {
+            switch (direction) {
+                case "up" -> image = upSprites != null && upSprites.length > 0 ? upSprites[0] : null;
+                case "down" -> image = downSprites != null && downSprites.length > 0 ? downSprites[0] : null;
+                case "left" -> image = leftSprites != null && leftSprites.length > 0 ? leftSprites[0] : null;
+                case "right" -> image = rightSprites != null && rightSprites.length > 0 ? rightSprites[0] : null;
             }
         }
 
-        g2.drawImage(image, x, y, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
+        if (image != null) {
+            g2.drawImage(image, x, y, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
+        }
     }
 }
