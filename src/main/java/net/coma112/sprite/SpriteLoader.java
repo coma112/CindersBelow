@@ -1,6 +1,5 @@
 package net.coma112.sprite;
 
-import lombok.extern.java.Log;
 import net.coma112.utils.LoggerUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -9,7 +8,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SpriteLoader {
@@ -30,7 +28,7 @@ public class SpriteLoader {
                     loadSpriteSheet(o, field);
                 }
             } catch (Exception exception) {
-                System.err.println(exception.getMessage());
+                LoggerUtils.error(exception.getMessage());
             }
         }
     }
@@ -62,7 +60,7 @@ public class SpriteLoader {
 
             field.set(o, images);
         } else {
-            System.out.println("BufferedImage[] not found");
+            LoggerUtils.error("BufferImage nem OK!");
         }
     }
 
