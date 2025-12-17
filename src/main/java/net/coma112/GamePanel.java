@@ -56,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
             // 1. Információk frissítése
             update();
 
-            // 2. rajzolás, megjelenítés
+            // 2. rajzolás, megjelenítés (grafika frissítése lényegében)
             repaint();
 
             try {

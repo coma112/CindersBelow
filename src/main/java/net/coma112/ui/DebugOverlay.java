@@ -31,7 +31,7 @@ public class DebugOverlay {
     }
 
     public void draw(@NonNull Graphics2D g2, @NonNull Player player, @NonNull PlayerInventory inventory) {
-        // Háttér panel
+        // Háttér
         g2.setColor(new Color(0, 0, 0, 150));
         g2.fillRect(10, 10, 300, 200);
 

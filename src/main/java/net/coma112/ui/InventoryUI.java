@@ -40,12 +40,11 @@ public class InventoryUI {
         g2.setStroke(new BasicStroke(2));
         g2.drawRoundRect(panelX, panelY, panelWidth, panelHeight, 10, 10);
 
-        // Cím a StarCrush fonttal
         g2.setColor(Color.WHITE);
         g2.setFont(FontUtils.getStarCrush(24));
         g2.drawString("Inventory", panelX + 20, panelY + 30);
 
-        // Slot-ok rajzolása
+        // Slotok
         Item[] items = inventory.getItems();
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLUMNS; col++) {
@@ -55,15 +54,15 @@ public class InventoryUI {
                 int slotX = panelX + PADDING + (col * (SLOT_SIZE + PADDING));
                 int slotY = panelY + 50 + (row * (SLOT_SIZE + PADDING));
 
-                // Slot háttér
+                // hatter
                 g2.setColor(new Color(60, 60, 60));
                 g2.fillRect(slotX, slotY, SLOT_SIZE, SLOT_SIZE);
 
-                // Slot keret
+                // keret
                 g2.setColor(new Color(120, 120, 120));
                 g2.drawRect(slotX, slotY, SLOT_SIZE, SLOT_SIZE);
 
-                // Item megjelenítése
+                // Item & infoi
                 Item item = items[slotIndex];
                 if (item != null) {
                     g2.setColor(getRarityColor(item));
@@ -75,7 +74,7 @@ public class InventoryUI {
                     drawCenteredString(g2, String.valueOf(item.getDurability()), slotX, slotY + 10, SLOT_SIZE, SLOT_SIZE);
                 }
 
-                // Slot szám
+                // slot SZÁM
                 g2.setColor(new Color(200, 200, 200));
                 g2.setFont(FontUtils.getStarCrush(16));
                 g2.drawString(String.valueOf(slotIndex + 1), slotX + 2, slotY + 12);

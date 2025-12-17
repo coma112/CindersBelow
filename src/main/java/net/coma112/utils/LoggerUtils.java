@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 @UtilityClass
 public class LoggerUtils {
-    private final Logger logger = LogManager.getLogger("McFriends");
+    private final Logger logger = LogManager.getLogger("CindersBelow");
 
     public void info(@NotNull String msg, @NotNull Object... objs) {
         logger.info(msg, objs);

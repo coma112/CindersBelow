@@ -1,5 +1,7 @@
 package net.coma112.sprite;
 
+import lombok.extern.java.Log;
+import net.coma112.utils.LoggerUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -77,7 +79,7 @@ public class SpriteLoader {
             InputStream stream = SpriteLoader.class.getResourceAsStream(path);
 
             if (stream == null) {
-                System.err.println("Nem talalhato a res. mappa!");
+                LoggerUtils.error("Nem talalhato stream");
                 return null;
             }
 
@@ -87,10 +89,10 @@ public class SpriteLoader {
                 SPRITE_CACHE.put(path, image);
                 return image;
             } else {
-                System.out.println("nem sikerult betolteni!");
+                LoggerUtils.error("Nem sikerult betolteni spriteot!");
             }
         } catch (Exception exception) {
-            System.err.println(exception.getMessage());
+            LoggerUtils.error(exception.getMessage());
         }
 
         return null;
