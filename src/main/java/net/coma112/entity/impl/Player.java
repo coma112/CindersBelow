@@ -12,8 +12,7 @@ import net.coma112.sprite.SpriteSheet;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Player extends Entity {
     GamePanel gamePanel;
@@ -32,7 +31,7 @@ public class Player extends Entity {
     @SpriteSheet(pattern = "player/boy_right_{n}.png")
     private BufferedImage[] rightSprites;
 
-    private final Map<String, SpriteAnimation> animations = new HashMap<>();
+    private final ConcurrentHashMap<String, SpriteAnimation> animations = new ConcurrentHashMap<>();
     private SpriteAnimation currentAnimation;
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {

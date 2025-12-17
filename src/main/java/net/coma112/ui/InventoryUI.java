@@ -3,9 +3,15 @@ package net.coma112.ui;
 import net.coma112.GamePanel;
 import net.coma112.inventory.impl.PlayerInventory;
 import net.coma112.item.Item;
+import net.coma112.sprite.SpriteLoader;
+import net.coma112.utils.LoggerUtils;
 import org.jspecify.annotations.NonNull;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class InventoryUI {
     private final GamePanel gamePanel;
@@ -26,6 +32,22 @@ public class InventoryUI {
         int panelX = (gamePanel.SCREEN_WIDTH - panelWidth) / 2;
         int panelY = (gamePanel.SCREEN_HEIGHT - panelHeight) / 2;
 
+        InputStream stream = SpriteLoader.class.getResourceAsStream("fonts/StarCrush.ttf");
+
+        if (stream == null) {
+            System.err.println("Nem talalhato a fonts mappa!");
+            return;
+        }
+
+        try {
+            Font font = Font.createFont(Font.TRUETYPE_FONT, stream);
+            GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+            environment.registerFont(font);
+        } catch (IOException | FontFormatException exception) {
+            LoggerUtils.error(exception.getMessage());
+        }
+
         g2.setColor(new Color(0, 0, 0, 200));
         g2.fillRoundRect(panelX, panelY, panelWidth, panelHeight, 10, 10);
 
@@ -34,7 +56,7 @@ public class InventoryUI {
         g2.drawRoundRect(panelX, panelY, panelWidth, panelHeight, 10, 10);
 
         g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Arial", Font.BOLD, 24));
+        g2.setFont(, Font.BOLD, 24));
         g2.drawString("Inventory", panelX + 20, panelY + 30);
 
         Item[] items = inventory.getItems();
