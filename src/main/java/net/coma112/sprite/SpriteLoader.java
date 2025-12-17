@@ -1,5 +1,8 @@
 package net.coma112.sprite;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
@@ -10,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SpriteLoader {
     private static final ConcurrentHashMap<String, BufferedImage> SPRITE_CACHE = new ConcurrentHashMap<>();
 
-    public static void loadSprites(Object o) {
+    public static void loadSprites(@NonNull Object o) {
         Class<?> clazz = o.getClass();
 
         for (Field field : clazz.getDeclaredFields()) {
@@ -30,7 +33,7 @@ public class SpriteLoader {
         }
     }
 
-    private static void loadSingleSprite(Object o, Field field) throws IllegalAccessException {
+    private static void loadSingleSprite(Object o, @NonNull Field field) throws IllegalAccessException {
         Sprite annotation = field.getAnnotation(Sprite.class);
         String path = annotation.value();
 
@@ -41,7 +44,7 @@ public class SpriteLoader {
         }
     }
 
-    private static void loadSpriteSheet(Object o, Field field) throws IllegalAccessException {
+    private static void loadSpriteSheet(Object o, @NonNull Field field) throws IllegalAccessException {
         SpriteSheet annotation = field.getAnnotation(SpriteSheet.class);
         String pattern = annotation.pattern();
         int count = annotation.count();
@@ -61,7 +64,7 @@ public class SpriteLoader {
         }
     }
 
-    private static BufferedImage loadImage(String path) {
+    private static @Nullable BufferedImage loadImage(String path) {
         if (SPRITE_CACHE.containsKey(path)) {
             return SPRITE_CACHE.get(path);
         }

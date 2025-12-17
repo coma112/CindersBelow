@@ -4,6 +4,7 @@ import net.coma112.GamePanel;
 import net.coma112.entity.impl.Player;
 import net.coma112.inventory.impl.PlayerInventory;
 import net.coma112.item.Item;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 
@@ -29,7 +30,7 @@ public class DebugOverlay {
         }
     }
 
-    public void draw(Graphics2D g2, Player player, PlayerInventory inventory) {
+    public void draw(@NonNull Graphics2D g2, @NonNull Player player, @NonNull PlayerInventory inventory) {
         // Háttér panel
         g2.setColor(new Color(0, 0, 0, 150));
         g2.fillRect(10, 10, 300, 200);
@@ -39,7 +40,6 @@ public class DebugOverlay {
         g2.setStroke(new BasicStroke(2));
         g2.drawRect(10, 10, 300, 200);
 
-        // Debug szövegek
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Monospaced", Font.PLAIN, 14));
 

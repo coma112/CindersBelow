@@ -1,5 +1,7 @@
 package net.coma112.sprite;
 
+import lombok.Getter;
+
 import java.awt.image.BufferedImage;
 
 public class SpriteAnimation {
@@ -8,7 +10,7 @@ public class SpriteAnimation {
     private final boolean loop;
     private int currentFrame;
     private int frameCounter;
-    private boolean playing;
+    @Getter private boolean playing;
 
     public SpriteAnimation(BufferedImage[] frames, int frameDelay) {
         this.frames = frames;
@@ -59,9 +61,5 @@ public class SpriteAnimation {
     public void reset() {
         this.currentFrame = 0;
         this.frameCounter = 0;
-    }
-
-    public boolean isPlaying() {
-        return playing;
     }
 }

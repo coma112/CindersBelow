@@ -1,13 +1,14 @@
 package net.coma112.inventory.impl;
 
+import lombok.Getter;
 import net.coma112.entity.impl.Player;
 import net.coma112.inventory.Inventory;
 import net.coma112.item.Item;
 
 public class PlayerInventory implements Inventory {
-    private final Item[] items;
+    @Getter private final Item[] items;
     private final int size;
-    private boolean isOpen = false;
+    @Getter private boolean isOpen = false;
 
     public PlayerInventory(int size) {
         this.size = size;
@@ -35,10 +36,6 @@ public class PlayerInventory implements Inventory {
     @Override
     public int getSize() {
         return size;
-    }
-
-    public boolean isOpen() {
-        return isOpen;
     }
 
     public void setItem(int slot, Item item) {
@@ -69,9 +66,5 @@ public class PlayerInventory implements Inventory {
             if (item != null) count++;
         }
         return count;
-    }
-
-    public Item[] getItems() {
-        return items;
     }
 }

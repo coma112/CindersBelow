@@ -1,5 +1,6 @@
 package net.coma112.entity.impl;
 
+import lombok.Getter;
 import net.coma112.GamePanel;
 import net.coma112.entity.Entity;
 import net.coma112.handlers.KeyHandler;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class Player extends Entity {
     GamePanel gamePanel;
     KeyHandler keyHandler;
-    private final PlayerInventory inventory;
+    @Getter private final PlayerInventory inventory;
 
     @SpriteSheet(pattern = "player/boy_up_{n}.png")
     private BufferedImage[] upSprites;
@@ -153,9 +154,5 @@ public class Player extends Entity {
         if (image != null) {
             g2.drawImage(image, x, y, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
         }
-    }
-
-    public PlayerInventory getInventory() {
-        return inventory;
     }
 }

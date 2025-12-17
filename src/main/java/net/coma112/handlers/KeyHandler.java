@@ -1,5 +1,7 @@
 package net.coma112.handlers;
 
+import org.jspecify.annotations.NonNull;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -19,7 +21,7 @@ public class KeyHandler implements KeyListener {
     }
 
     @Override
-    public void keyPressed(KeyEvent event) {
+    public void keyPressed(@NonNull KeyEvent event) {
         int code = event.getKeyCode();
 
         switch (code) {
@@ -49,7 +51,7 @@ public class KeyHandler implements KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent event) {
+    public void keyReleased(@NonNull KeyEvent event) {
         int code = event.getKeyCode();
 
         switch (code) {

@@ -2,7 +2,6 @@ package net.coma112;
 
 import net.coma112.entity.impl.Player;
 import net.coma112.handlers.KeyHandler;
-import net.coma112.item.impl.Sword;
 import net.coma112.ui.DebugOverlay;
 import net.coma112.ui.InventoryUI;
 
@@ -80,7 +79,6 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         player.update();
 
-        // Debug overlay frissítése
         if (keyHandler.debugToggled) {
             debugOverlay.update();
         }

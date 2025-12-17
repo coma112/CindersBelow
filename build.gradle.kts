@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("io.freefair.lombok") version "8.11"
 }
 
 group = "net.coma112"
@@ -10,8 +11,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.2")
+    implementation("org.jetbrains:annotations:26.0.2-1")
 }
 
 sourceSets {
@@ -26,7 +28,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-// Add this to handle duplicates
 tasks.processResources {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE  // or INCLUDE, WARN, FAIL
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

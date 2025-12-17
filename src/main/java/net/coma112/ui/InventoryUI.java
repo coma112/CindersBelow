@@ -3,25 +3,26 @@ package net.coma112.ui;
 import net.coma112.GamePanel;
 import net.coma112.inventory.impl.PlayerInventory;
 import net.coma112.item.Item;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 
 public class InventoryUI {
     private final GamePanel gamePanel;
-    private final int slotSize = 64;
-    private final int padding = 10;
-    private final int columns = 9;
-    private final int rows = 4;
+    private final int SLOT_SIZE = 64;
+    private final int PADDING = 10;
+    private final int COLUMNS = 9;
+    private final int ROWS = 4;
 
     public InventoryUI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
 
-    public void draw(Graphics2D g2, PlayerInventory inventory) {
+    public void draw(Graphics2D g2, @NonNull PlayerInventory inventory) {
         if (!inventory.isOpen()) return;
 
-        int panelWidth = (slotSize * columns) + (padding * (columns + 1));
-        int panelHeight = (slotSize * rows) + (padding * (rows + 1)) + 40;
+        int panelWidth = (SLOT_SIZE * COLUMNS) + (PADDING * (COLUMNS + 1));
+        int panelHeight = (SLOT_SIZE * ROWS) + (PADDING * (ROWS + 1)) + 40;
         int panelX = (gamePanel.SCREEN_WIDTH - panelWidth) / 2;
         int panelY = (gamePanel.SCREEN_HEIGHT - panelHeight) / 2;
 
@@ -37,29 +38,29 @@ public class InventoryUI {
         g2.drawString("Inventory", panelX + 20, panelY + 30);
 
         Item[] items = inventory.getItems();
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                int slotIndex = row * columns + col;
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLUMNS; col++) {
+                int slotIndex = row * COLUMNS + col;
                 if (slotIndex >= inventory.getSize()) break;
 
-                int slotX = panelX + padding + (col * (slotSize + padding));
-                int slotY = panelY + 50 + (row * (slotSize + padding));
+                int slotX = panelX + PADDING + (col * (SLOT_SIZE + PADDING));
+                int slotY = panelY + 50 + (row * (SLOT_SIZE + PADDING));
 
                 g2.setColor(new Color(60, 60, 60));
-                g2.fillRect(slotX, slotY, slotSize, slotSize);
+                g2.fillRect(slotX, slotY, SLOT_SIZE, SLOT_SIZE);
 
                 g2.setColor(new Color(120, 120, 120));
-                g2.drawRect(slotX, slotY, slotSize, slotSize);
+                g2.drawRect(slotX, slotY, SLOT_SIZE, SLOT_SIZE);
 
                 Item item = items[slotIndex];
                 if (item != null) {
                     g2.setColor(getRarityColor(item));
-                    g2.fillRect(slotX + 5, slotY + 5, slotSize - 10, slotSize - 10);
+                    g2.fillRect(slotX + 5, slotY + 5, SLOT_SIZE - 10, SLOT_SIZE - 10);
 
                     g2.setColor(Color.WHITE);
                     g2.setFont(new Font("Arial", Font.PLAIN, 10));
-                    drawCenteredString(g2, item.getName(), slotX, slotY, slotSize, slotSize);
-                    drawCenteredString(g2, String.valueOf(item.getDurability()), slotX, slotY + 10, slotSize, slotSize);
+                    drawCenteredString(g2, item.getName(), slotX, slotY, SLOT_SIZE, SLOT_SIZE);
+                    drawCenteredString(g2, String.valueOf(item.getDurability()), slotX, slotY + 10, SLOT_SIZE, SLOT_SIZE);
                 }
 
                 g2.setColor(new Color(200, 200, 200));
@@ -73,14 +74,14 @@ public class InventoryUI {
         g2.drawString("Press 'E' to close", panelX + 20, panelY + panelHeight - 10);
     }
 
-    private void drawCenteredString(Graphics2D g2, String text, int x, int y, int width, int height) {
+    private void drawCenteredString(@NonNull Graphics2D g2, String text, int x, int y, int width, int height) {
         FontMetrics metrics = g2.getFontMetrics();
         int textX = x + (width - metrics.stringWidth(text)) / 2;
         int textY = y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
         g2.drawString(text, textX, textY);
     }
 
-    private Color getRarityColor(Item item) {
+    private @NonNull Color getRarityColor(@NonNull Item item) {
         return switch (item.getRarity()) {
             case COMMON -> new Color(150, 150, 150);
             case UNCOMMON -> new Color(30, 255, 0);
