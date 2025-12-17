@@ -3,11 +3,10 @@ package net.coma112.ui;
 import net.coma112.GamePanel;
 import net.coma112.inventory.impl.PlayerInventory;
 import net.coma112.item.Item;
-import net.coma112.sprite.SpriteLoader;
+import net.coma112.utils.FontUtils;
 import net.coma112.utils.LoggerUtils;
 import org.jspecify.annotations.NonNull;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -32,33 +31,21 @@ public class InventoryUI {
         int panelX = (gamePanel.SCREEN_WIDTH - panelWidth) / 2;
         int panelY = (gamePanel.SCREEN_HEIGHT - panelHeight) / 2;
 
-        InputStream stream = SpriteLoader.class.getResourceAsStream("fonts/StarCrush.ttf");
-
-        if (stream == null) {
-            System.err.println("Nem talalhato a fonts mappa!");
-            return;
-        }
-
-        try {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, stream);
-            GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-            environment.registerFont(font);
-        } catch (IOException | FontFormatException exception) {
-            LoggerUtils.error(exception.getMessage());
-        }
-
+        // Háttér
         g2.setColor(new Color(0, 0, 0, 200));
         g2.fillRoundRect(panelX, panelY, panelWidth, panelHeight, 10, 10);
 
+        // Keret
         g2.setColor(new Color(200, 200, 200));
         g2.setStroke(new BasicStroke(2));
         g2.drawRoundRect(panelX, panelY, panelWidth, panelHeight, 10, 10);
 
+        // Cím a StarCrush fonttal
         g2.setColor(Color.WHITE);
-        g2.setFont(, Font.BOLD, 24));
+        g2.setFont(FontUtils.getStarCrush(24));
         g2.drawString("Inventory", panelX + 20, panelY + 30);
 
+        // Slot-ok rajzolása
         Item[] items = inventory.getItems();
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLUMNS; col++) {
@@ -68,32 +55,32 @@ public class InventoryUI {
                 int slotX = panelX + PADDING + (col * (SLOT_SIZE + PADDING));
                 int slotY = panelY + 50 + (row * (SLOT_SIZE + PADDING));
 
+                // Slot háttér
                 g2.setColor(new Color(60, 60, 60));
                 g2.fillRect(slotX, slotY, SLOT_SIZE, SLOT_SIZE);
 
+                // Slot keret
                 g2.setColor(new Color(120, 120, 120));
                 g2.drawRect(slotX, slotY, SLOT_SIZE, SLOT_SIZE);
 
+                // Item megjelenítése
                 Item item = items[slotIndex];
                 if (item != null) {
                     g2.setColor(getRarityColor(item));
                     g2.fillRect(slotX + 5, slotY + 5, SLOT_SIZE - 10, SLOT_SIZE - 10);
 
                     g2.setColor(Color.WHITE);
-                    g2.setFont(new Font("Arial", Font.PLAIN, 10));
+                    g2.setFont(FontUtils.getStarCrush(12));
                     drawCenteredString(g2, item.getName(), slotX, slotY, SLOT_SIZE, SLOT_SIZE);
                     drawCenteredString(g2, String.valueOf(item.getDurability()), slotX, slotY + 10, SLOT_SIZE, SLOT_SIZE);
                 }
 
+                // Slot szám
                 g2.setColor(new Color(200, 200, 200));
-                g2.setFont(new Font("Arial", Font.PLAIN, 10));
+                g2.setFont(FontUtils.getStarCrush(16));
                 g2.drawString(String.valueOf(slotIndex + 1), slotX + 2, slotY + 12);
             }
         }
-
-        g2.setColor(new Color(180, 180, 180));
-        g2.setFont(new Font("Arial", Font.PLAIN, 14));
-        g2.drawString("Press 'E' to close", panelX + 20, panelY + panelHeight - 10);
     }
 
     private void drawCenteredString(@NonNull Graphics2D g2, String text, int x, int y, int width, int height) {
