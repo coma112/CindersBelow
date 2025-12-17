@@ -25,4 +25,19 @@ public class Sword extends Item {
     public int getDurability() {
         return 100;
     }
+
+    @Override
+    public int getAttackDamage() {
+        return 25;
+    }
+
+    @Override
+    public int getStaminaCost() {
+        return 10;
+    }
+
+    @Override
+    public int getDurabilityLoss() {
+        return 5;
+    }
 }

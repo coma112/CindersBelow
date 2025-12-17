@@ -33,12 +33,12 @@ public class DebugOverlay {
     public void draw(@NonNull Graphics2D g2, @NonNull Player player, @NonNull PlayerInventory inventory) {
         // Háttér
         g2.setColor(new Color(0, 0, 0, 150));
-        g2.fillRect(10, 10, 300, 200);
+        g2.fillRect(10, 10, 300, 280);
 
         // Keret
         g2.setColor(new Color(0, 255, 0));
         g2.setStroke(new BasicStroke(2));
-        g2.drawRect(10, 10, 300, 200);
+        g2.drawRect(10, 10, 300, 280);
 
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -64,16 +64,40 @@ public class DebugOverlay {
         g2.drawString("Direction: " + player.direction, 20, y);
         y += lineHeight;
 
+        // Health
+        g2.setColor(new Color(255, 100, 100));
+        g2.drawString("Health: " + player.currentHealth + "/" + player.maxHealth, 20, y);
+        y += lineHeight;
+
+        // Stamina
+        g2.setColor(new Color(100, 255, 100));
+        g2.drawString("Stamina: " + player.currentStamina + "/" + player.maxStamina, 20, y);
+        y += lineHeight;
+
+        g2.setColor(Color.WHITE);
+
         // Inventory info
         g2.drawString("Inventory Open: " + inventory.isOpen(), 20, y);
         y += lineHeight;
         g2.drawString("Items: " + inventory.getItemCount() + "/" + inventory.getSize(), 20, y);
         y += lineHeight;
 
-        Item item = inventory.getItem(1);
-
-        g2.drawString("1. slot: " + item.getName() + ", " + String.valueOf(item.getDurability()), 20, y);
+        // Selected hotbar slot
+        g2.drawString("Hotbar Slot: " + (inventory.getSelectedHotbarSlot() + 1), 20, y);
         y += lineHeight;
+
+        // Selected hotbar item
+        Item selectedItem = inventory.getSelectedHotbarItem();
+        if (selectedItem != null) {
+            g2.drawString("Hand: " + selectedItem.getName(), 20, y);
+            y += lineHeight;
+            g2.drawString("Durability: " + selectedItem.getCurrentDurability() + "/" +
+                    selectedItem.getMaxDurability(), 20, y);
+            y += lineHeight;
+        } else {
+            g2.drawString("Hand: Empty", 20, y);
+            y += lineHeight * 2;
+        }
 
         // csempe pozicio képernyőn
         int screenCol = player.x / gamePanel.TILE_SIZE;

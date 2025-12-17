@@ -34,10 +34,14 @@ public class Player extends Entity {
     private final ConcurrentHashMap<String, SpriteAnimation> animations = new ConcurrentHashMap<>();
     private SpriteAnimation currentAnimation;
 
+    // Stamina regeneráció
+    private int staminaRegenCounter = 0;
+    private static final int STAMINA_REGEN_DELAY = 60; // 1 másodperc 60 FPS-nél
+
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
-        this.inventory = new PlayerInventory(36); // 9x4 slot
+        this.inventory = new PlayerInventory(36); // 9x4 slot (9 hotbar + 27 inventory)
 
         setDefaultValues();
         loadSprites();
@@ -49,6 +53,11 @@ public class Player extends Entity {
         y = 100;
         speed = 3;
         direction = "down";
+
+        maxHealth = 100;
+        currentHealth = maxHealth;
+        maxStamina = 100;
+        currentStamina = maxStamina;
 
         Sword sword = new Sword();
         getInventory().setItem(1, sword);
@@ -68,7 +77,6 @@ public class Player extends Entity {
     }
 
     public void update() {
-        // Inventory kezelés
         if (keyHandler.inventoryToggled) {
             if (inventory.isOpen()) {
                 inventory.close(this);
@@ -77,6 +85,11 @@ public class Player extends Entity {
             }
 
             keyHandler.inventoryToggled = false;
+        }
+
+        if (keyHandler.hotbarSlotPressed >= 0) {
+            inventory.setSelectedHotbarSlot(keyHandler.hotbarSlotPressed);
+            keyHandler.hotbarSlotPressed = -1;
         }
 
         if (inventory.isOpen()) {
@@ -88,28 +101,48 @@ public class Player extends Entity {
             return;
         }
 
+        if (keyHandler.attackPressed) {
+            performAttack();
+            keyHandler.attackPressed = false; // Reset hogy ne legyen folyamatos ütés
+        }
+
+        if (currentStamina < maxStamina) {
+            staminaRegenCounter++;
+            if (staminaRegenCounter >= STAMINA_REGEN_DELAY) {
+                currentStamina = Math.min(currentStamina + 1, maxStamina);
+                staminaRegenCounter = 0;
+            }
+        }
+
         boolean isMoving = keyHandler.upPressed || keyHandler.downPressed ||
                 keyHandler.leftPressed || keyHandler.rightPressed;
 
         if (isMoving) {
+            int currentSpeed = speed;
+            if (keyHandler.shiftPressed && currentStamina > 0) {
+                currentSpeed = speed * 2;
+                currentStamina = Math.max(currentStamina - 1, 0);
+                staminaRegenCounter = 0;
+            }
+
             if (keyHandler.upPressed) {
                 direction = "up";
-                y -= speed;
+                y -= currentSpeed;
             }
 
             if (keyHandler.downPressed) {
                 direction = "down";
-                y += speed;
+                y += currentSpeed;
             }
 
             if (keyHandler.leftPressed) {
                 direction = "left";
-                x -= speed;
+                x -= currentSpeed;
             }
 
             if (keyHandler.rightPressed) {
                 direction = "right";
-                x += speed;
+                x += currentSpeed;
             }
 
             SpriteAnimation newAnimation = animations.get(direction);
@@ -134,6 +167,27 @@ public class Player extends Entity {
         }
     }
 
+    private void performAttack() {
+        var selectedItem = inventory.getSelectedHotbarItem();
+
+        if (selectedItem == null || selectedItem.isBroken()) {
+            return;
+        }
+
+        if (currentStamina < selectedItem.getStaminaCost()) {
+            return;
+        }
+
+        consumeStamina(selectedItem.getStaminaCost());
+        selectedItem.use();
+
+        // Stamina regen reset
+        staminaRegenCounter = 0;
+
+        // Itt később lehet hozzáadni a tényleges támadás logikát (mob sebzés, stb.)
+        // Például: dealDamageToNearbyEnemies(selectedItem.getAttackDamage());
+    }
+
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
 
@@ -153,5 +207,21 @@ public class Player extends Entity {
         if (image != null) {
             g2.drawImage(image, x, y, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
         }
+    }
+
+    public void takeDamage(int damage) {
+        currentHealth = Math.max(currentHealth - damage, 0);
+    }
+
+    public void heal(int amount) {
+        currentHealth = Math.min(currentHealth + amount, maxHealth);
+    }
+
+    public void consumeStamina(int amount) {
+        currentStamina = Math.max(currentStamina - amount, 0);
+    }
+
+    public void restoreStamina(int amount) {
+        currentStamina = Math.min(currentStamina + amount, maxStamina);
     }
 }

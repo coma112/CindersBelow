@@ -13,6 +13,7 @@ public class Main {
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
+        window.setUndecorated(true);
         window.setTitle("Cinders Below");
 
         GamePanel gamePanel = new GamePanel();
