@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 public class SpriteAnimation {
     private final BufferedImage[] frames;
     private final int frameDelay;
+    private final boolean loop;
     private int currentFrame;
     private int frameCounter;
-    private boolean loop;
     private boolean playing;
 
     public SpriteAnimation(BufferedImage[] frames, int frameDelay) {
@@ -61,19 +61,7 @@ public class SpriteAnimation {
         this.frameCounter = 0;
     }
 
-    public void setLoop(boolean loop) {
-        this.loop = loop;
-    }
-
     public boolean isPlaying() {
         return playing;
-    }
-
-    public int getCurrentFrameIndex() {
-        return currentFrame;
-    }
-
-    public int getFrameCount() {
-        return frames != null ? frames.length : 0;
     }
 }

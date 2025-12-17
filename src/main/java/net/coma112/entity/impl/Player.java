@@ -3,6 +3,8 @@ package net.coma112.entity.impl;
 import net.coma112.GamePanel;
 import net.coma112.entity.Entity;
 import net.coma112.handlers.KeyHandler;
+import net.coma112.inventory.impl.PlayerInventory;
+import net.coma112.item.impl.Sword;
 import net.coma112.sprite.SpriteAnimation;
 import net.coma112.sprite.SpriteLoader;
 import net.coma112.sprite.SpriteSheet;
@@ -15,6 +17,7 @@ import java.util.Map;
 public class Player extends Entity {
     GamePanel gamePanel;
     KeyHandler keyHandler;
+    private final PlayerInventory inventory;
 
     @SpriteSheet(pattern = "player/boy_up_{n}.png")
     private BufferedImage[] upSprites;
@@ -34,6 +37,7 @@ public class Player extends Entity {
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
+        this.inventory = new PlayerInventory(36); // 9x4 slot
 
         setDefaultValues();
         loadSprites();
@@ -45,6 +49,9 @@ public class Player extends Entity {
         y = 100;
         speed = 3;
         direction = "down";
+
+        Sword sword = new Sword();
+        getInventory().setItem(1, sword);
     }
 
     private void loadSprites() {
@@ -61,6 +68,26 @@ public class Player extends Entity {
     }
 
     public void update() {
+        // Inventory kezelés
+        if (keyHandler.inventoryToggled) {
+            if (inventory.isOpen()) {
+                inventory.close(this);
+            } else {
+                inventory.open(this);
+            }
+
+            keyHandler.inventoryToggled = false;
+        }
+
+        if (inventory.isOpen()) {
+            if (currentAnimation != null && currentAnimation.isPlaying()) {
+                currentAnimation.stop();
+                currentAnimation.reset();
+            }
+
+            return;
+        }
+
         boolean isMoving = keyHandler.upPressed || keyHandler.downPressed ||
                 keyHandler.leftPressed || keyHandler.rightPressed;
 
@@ -126,5 +153,9 @@ public class Player extends Entity {
         if (image != null) {
             g2.drawImage(image, x, y, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
         }
+    }
+
+    public PlayerInventory getInventory() {
+        return inventory;
     }
 }

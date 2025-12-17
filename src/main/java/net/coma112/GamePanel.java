@@ -2,6 +2,9 @@ package net.coma112;
 
 import net.coma112.entity.impl.Player;
 import net.coma112.handlers.KeyHandler;
+import net.coma112.item.impl.Sword;
+import net.coma112.ui.DebugOverlay;
+import net.coma112.ui.InventoryUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,12 +18,16 @@ public class GamePanel extends JPanel implements Runnable {
     // játékterület
     final int MAX_SCREEN_COL = 40; // 16 oszlop
     final double MAX_SCREEN_ROW = 22.5; // 12 oszlop
-    final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;
-    final int SCREEN_HEIGHT = (int) (TILE_SIZE * MAX_SCREEN_ROW);
+    public final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;
+    public final int SCREEN_HEIGHT = (int) (TILE_SIZE * MAX_SCREEN_ROW);
 
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
     Player player = new Player(this, keyHandler);
+
+    // UI elemek
+    private final InventoryUI inventoryUI;
+    private final DebugOverlay debugOverlay;
 
     final int FPS = 60;
 
@@ -30,6 +37,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true); // jobb lesz a rendering teljesítmény
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+
+        // UI inicializálás
+        this.inventoryUI = new InventoryUI(this);
+        this.debugOverlay = new DebugOverlay(this);
     }
 
     public void startGameThread() {
@@ -68,6 +79,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
+
+        // Debug overlay frissítése
+        if (keyHandler.debugToggled) {
+            debugOverlay.update();
+        }
     }
 
     public void paintComponent(Graphics graphics) {
@@ -75,7 +91,17 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D) graphics;
 
+        // Játékos rajzolása
         player.draw(g2);
+
+        // Inventory UI rajzolása
+        inventoryUI.draw(g2, player.getInventory());
+
+        // Debug overlay rajzolása
+        if (keyHandler.debugToggled) {
+            debugOverlay.draw(g2, player, player.getInventory());
+        }
+
         g2.dispose();
     }
 }

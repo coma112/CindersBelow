@@ -2,6 +2,7 @@ package net.coma112.sprite;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,7 +71,14 @@ public class SpriteLoader {
                 path = "/" + path;
             }
 
-            BufferedImage image = ImageIO.read(SpriteLoader.class.getResourceAsStream(path));
+            InputStream stream = SpriteLoader.class.getResourceAsStream(path);
+
+            if (stream == null) {
+                System.err.println("Nem talalhato a res. mappa!");
+                return null;
+            }
+
+            BufferedImage image = ImageIO.read(stream);
 
             if (image != null) {
                 SPRITE_CACHE.put(path, image);

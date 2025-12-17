@@ -18,6 +18,11 @@ public class Sword extends Item {
 
     @Override
     public RarityType getRarity() {
-        return RarityType.COMMON;
+        return RarityType.LEGENDARY;
+    }
+
+    @Override
+    public int getDurability() {
+        return 100;
     }
 }
