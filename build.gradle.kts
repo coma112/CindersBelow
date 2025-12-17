@@ -25,3 +25,8 @@ sourceSets {
 tasks.test {
     useJUnitPlatform()
 }
+
+// Add this to handle duplicates
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE  // or INCLUDE, WARN, FAIL
+}

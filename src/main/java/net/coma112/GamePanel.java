@@ -13,10 +13,10 @@ public class GamePanel extends JPanel implements Runnable {
     public final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE;
 
     // játékterület
-    final int MAX_SCREEN_COL = 16; // 16 oszlop
-    final int MAX_SCREEN_ROW = 12; // 12 oszlop
+    final int MAX_SCREEN_COL = 40; // 16 oszlop
+    final double MAX_SCREEN_ROW = 22.5; // 12 oszlop
     final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;
-    final int SCREEN_HEIGHT = TILE_SIZE * MAX_SCREEN_ROW;
+    final int SCREEN_HEIGHT = (int) (TILE_SIZE * MAX_SCREEN_ROW);
 
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;

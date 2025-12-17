@@ -8,7 +8,7 @@ public class Main {
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.setTitle("ELSO JATEK");
+        window.setTitle("Cinders Below");
 
         GamePanel gamePanel = new GamePanel();
         window.add(gamePanel);
