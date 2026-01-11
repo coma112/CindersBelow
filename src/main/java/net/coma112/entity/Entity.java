@@ -10,4 +10,6 @@ public class Entity {
     public int currentHealth;
     public int maxStamina;
     public int currentStamina;
+
+    public boolean collisionOn = false;
 }

@@ -49,9 +49,9 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        x = 100;
-        y = 100;
-        speed = 3;
+        x = gamePanel.TILE_SIZE * 23; // Kezdő pozíció a pálya közepén
+        y = gamePanel.TILE_SIZE * 21;
+        speed = 4;
         direction = "down";
 
         maxHealth = 100;
@@ -125,24 +125,31 @@ public class Player extends Entity {
                 staminaRegenCounter = 0;
             }
 
+            // Collision reset - minden képkockánál újra ellenőrizzük
+            collisionOn = false;
+
+            // Irány beállítása
             if (keyHandler.upPressed) {
                 direction = "up";
-                y -= currentSpeed;
-            }
-
-            if (keyHandler.downPressed) {
+            } else if (keyHandler.downPressed) {
                 direction = "down";
-                y += currentSpeed;
-            }
-
-            if (keyHandler.leftPressed) {
+            } else if (keyHandler.leftPressed) {
                 direction = "left";
-                x -= currentSpeed;
+            } else if (keyHandler.rightPressed) {
+                direction = "right";
             }
 
-            if (keyHandler.rightPressed) {
-                direction = "right";
-                x += currentSpeed;
+            // Collision ellenőrzés
+            gamePanel.getCollisionChecker().checkTile(this);
+
+            // Mozgás csak ha nincs ütközés
+            if (!collisionOn) {
+                switch (direction) {
+                    case "up" -> y -= currentSpeed;
+                    case "down" -> y += currentSpeed;
+                    case "left" -> x -= currentSpeed;
+                    case "right" -> x += currentSpeed;
+                }
             }
 
             SpriteAnimation newAnimation = animations.get(direction);
@@ -204,8 +211,22 @@ public class Player extends Entity {
             }
         }
 
+        // Játékos mindig a képernyő közepén van
+        int screenX = gamePanel.SCREEN_WIDTH / 2 - (gamePanel.TILE_SIZE / 2);
+        int screenY = gamePanel.SCREEN_HEIGHT / 2 - (gamePanel.TILE_SIZE / 2);
+
         if (image != null) {
-            g2.drawImage(image, x, y, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
+            g2.drawImage(image, screenX, screenY, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
+        }
+
+        // Debug Hitbox vizual
+        if (gamePanel.keyHandler.debugToggled) {
+            g2.setColor(new Color(255, 0, 0, 100));
+            int hitboxX = screenX + 8;
+            int hitboxY = screenY + 16;
+            int hitboxWidth = gamePanel.TILE_SIZE - 16;
+            int hitboxHeight = gamePanel.TILE_SIZE - 20;
+            g2.fillRect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
         }
     }
 

@@ -1,7 +1,10 @@
 package net.coma112;
 
+import lombok.Getter;
 import net.coma112.entity.impl.Player;
+import net.coma112.handlers.CollisionChecker;
 import net.coma112.handlers.KeyHandler;
+import net.coma112.tile.TileManager;
 import net.coma112.ui.DebugOverlay;
 import net.coma112.ui.HotbarUI;
 import net.coma112.ui.InventoryUI;
@@ -21,9 +24,13 @@ public class GamePanel extends JPanel implements Runnable {
     public final int MAX_SCREEN_COL;
     public final int MAX_SCREEN_ROW;
 
-    KeyHandler keyHandler = new KeyHandler();
+    public KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
     Player player = new Player(this, keyHandler);
+
+    // Tile rendszer
+    @Getter private TileManager tileManager;
+    @Getter private CollisionChecker collisionChecker;
 
     private final HotbarUI hotbarUI;
     private final InventoryUI inventoryUI;
@@ -45,6 +52,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyHandler);
         this.addMouseListener(keyHandler);
         this.setFocusable(true);
+
+        // Tile rendszer inicializálás
+        this.tileManager = new TileManager(this);
+        this.collisionChecker = new CollisionChecker(this);
 
         // UI inicializálás
         this.hotbarUI = new HotbarUI(this);
@@ -121,6 +132,9 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(graphics);
 
         Graphics2D g2 = (Graphics2D) graphics;
+
+        // Tile-ok rajzolása ELŐSZÖR (háttér)
+        tileManager.draw(g2, player.x, player.y);
 
         // Játékos rajzolása
         player.draw(g2);
