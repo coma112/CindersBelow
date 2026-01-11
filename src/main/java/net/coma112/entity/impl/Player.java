@@ -34,9 +34,8 @@ public class Player extends Entity {
     private final ConcurrentHashMap<String, SpriteAnimation> animations = new ConcurrentHashMap<>();
     private SpriteAnimation currentAnimation;
 
-    // Stamina regeneráció
     private int staminaRegenCounter = 0;
-    private static final int STAMINA_REGEN_DELAY = 60; // 1 másodperc 60 FPS-nél
+    private static final int STAMINA_REGEN_DELAY = 60;
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
@@ -49,8 +48,8 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        x = gamePanel.TILE_SIZE * 23; // Kezdő pozíció a pálya közepén
-        y = gamePanel.TILE_SIZE * 21;
+        x = gamePanel.TILE_SIZE * 25;
+        y = gamePanel.TILE_SIZE * 25;
         speed = 4;
         direction = "down";
 
@@ -103,7 +102,7 @@ public class Player extends Entity {
 
         if (keyHandler.attackPressed) {
             performAttack();
-            keyHandler.attackPressed = false; // Reset hogy ne legyen folyamatos ütés
+            keyHandler.attackPressed = false;
         }
 
         if (currentStamina < maxStamina) {
@@ -125,24 +124,20 @@ public class Player extends Entity {
                 staminaRegenCounter = 0;
             }
 
-            // Collision reset - minden képkockánál újra ellenőrizzük
             collisionOn = false;
 
-            // Irány beállítása
             if (keyHandler.upPressed) {
                 direction = "up";
             } else if (keyHandler.downPressed) {
                 direction = "down";
             } else if (keyHandler.leftPressed) {
                 direction = "left";
-            } else if (keyHandler.rightPressed) {
+            } else {
                 direction = "right";
             }
 
-            // Collision ellenőrzés
             gamePanel.getCollisionChecker().checkTile(this);
 
-            // Mozgás csak ha nincs ütközés
             if (!collisionOn) {
                 switch (direction) {
                     case "up" -> y -= currentSpeed;
@@ -188,11 +183,7 @@ public class Player extends Entity {
         consumeStamina(selectedItem.getStaminaCost());
         selectedItem.use();
 
-        // Stamina regen reset
         staminaRegenCounter = 0;
-
-        // Itt később lehet hozzáadni a tényleges támadás logikát (mob sebzés, stb.)
-        // Például: dealDamageToNearbyEnemies(selectedItem.getAttackDamage());
     }
 
     public void draw(Graphics2D g2) {
@@ -211,7 +202,6 @@ public class Player extends Entity {
             }
         }
 
-        // Játékos mindig a képernyő közepén van
         int screenX = gamePanel.SCREEN_WIDTH / 2 - (gamePanel.TILE_SIZE / 2);
         int screenY = gamePanel.SCREEN_HEIGHT / 2 - (gamePanel.TILE_SIZE / 2);
 
@@ -219,7 +209,6 @@ public class Player extends Entity {
             g2.drawImage(image, screenX, screenY, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
         }
 
-        // Debug Hitbox vizual
         if (gamePanel.keyHandler.debugToggled) {
             g2.setColor(new Color(255, 0, 0, 100));
             int hitboxX = screenX + 8;
